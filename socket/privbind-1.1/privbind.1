@@ -1,0 +1,129 @@
+.TH privbind 1 "22 May 2007" "Privbind 0.1" ""
+.SH NAME
+privbind \- allow an unprivileged application to bind with reserved ports.
+.SH SYNOPSIS
+.B privbind
+\fB\-u\fR \fIuser\fR
+[ \fB\-g\fR \fIgroup\fR]
+[ \fB\-n\fR \fInum\fR]
+[ \fB\-l\fR \fIpath\fR]
+\fIcommand\fR [ \fIarguments\fR .\|.\|. ]
+.SH DESCRIPTION
+Normally in Linux, only a superuser process can bind an Internet domain socket
+with a reserved port (port numbers less than 1024). Accordingly,
+server processes are typically run with superuser privileges, which can be
+dropped after binding the reserved port.
+.PP
+.B privbind
+can execute an application as an unprivileged
+user with just one extra privilege: it can bind to reserved ports.
+.PP
+.B privbind
+is useful in several situations. It can be used when the application is not
+trusted enough; It can be used when the server is
+written in a language without the setuid(2) feature (e.g., Java(TM)); It
+can also be used to run applications which don't manipulate their own user id
+and need to be able to bind to a reserved port without needing any other root
+privileges.
+.PP
+.SH OPTIONS
+.TP
+.B \-u
+The
+.B \-u
+option is mandatory, and specifies under which user to run the given command.
+The user can be specified using either a username or a numeric user id.
+It should be an unprivileged (non-root) user.
+.TP
+.B \-g
+Specifies the group to switch to when running the given command. If this
+option is missing, then the given user's default group is used.
+.TP
+.BR \-n
+.BR privbind 's
+default behaviour is to allow the application to call bind(2) with
+reserved ports an unlimited number of times. In order to do that
+(see "HOW IT WORKS" below), the
+.B privbind
+helper process needs to wait for the application to exit before it terminates.
+
+The \fB\-n \fInum\fR option tells
+.B privbind
+that it can assume that only \fInum\fR binds need to be given elevated privileges.
+After this number of bind(2) calls have been executed, 
+.BR privbind 's
+helper process will exit, leaving behind only the unprivileged application
+running.
+.TP
+.BR \-l
+Mostly for internal use during build. Gives the explicit path to the LD_PRELOAD
+library.
+.TP
+.BR \-h
+Shows a short help screen, and exits.
+.SH "EXIT STATUS"
+Using technical jargon,
+.B privbind
+execs \fIcommand\fR as its main process, running itself in the background (as
+a child of the application's process). The
+practical upshot of this, in layman's terms, is that the user never sees
+\fBprivbind\fR's exit status. When running \fBprivbind\fR, the process will exit
+whenever, and with whatever exit status, \fIcommand\fR does.
+
+The above point should be particularly noted when using \fBprivbind\fR to run daemons.
+
+.SH "SECURITY CONSIDERATIONS"
+\fBprivbind\fR has no SUID parts, and runs within the confines of a single process.
+This serves to minimize the security implications of using it. It is strongly advised
+that \fBprivbind\fR \fInot\fR be made SUID, as this would allow any user that can
+run it to run any process as any other (non-root) user. At the moment privbind detects
+such a situation and warns about it, but will continue with the execution.
+
+.SH "HOW IT WORKS"
+In a nutshell, \fBprivbind\fR works by starting two processes. One drops
+privileges and runs (exec(2)) the command, the other remains as root.
+\fBPrivbind\fR makes sure to keep a unix domain socket connecting the two processes.
+
+\fBPrivbind\fR uses LD_PRELOAD to intercept every call to bind(2) made
+by the program. Calls that can be completed non-privileged are done so.
+Calls that require root privileges are forwarded to the root process, that
+carry them out on the program's behalf.
+
+A more detailed explanation is available in the README file.
+
+.SH "BUGS"
+\fBprivbind\fR currently uses "SOCK_SEQPACKET" for communication between
+privileged and non-privileged processes. This socket type is only
+implemented on Linux kernel 2.6.4 and later, which makes privbind none
+portable to older Linux kernels and many other non-Linux platforms.
+
+.SH "VERSION"
+The version of
+.B privbind
+described by this manual page is 1.0 (June 12, 2007)
+.SH "COPYRIGHT"
+Copyright (C) 2006-2007, Shachar Shemesh plus others. See the AUTHORS file.
+
+.B privbind
+was written by Shachar Shemesh, with contributions from Amos Shapira and
+Nadav Har'El.
+
+.B privbind
+is free software, released under the GNU General Public License (GPL).
+See the COPYING file for more information and the exact license terms.
+
+The latest version of this software can be found in
+
+    http://sourceforge.net/projects/privbind
+
+.B Java
+is a registered trademark of Sun Microsystems.
+
+.SH "SEE ALSO"
+.BR su (1),
+.BR sudo (8),
+.BR capabilities (7),
+.BR bind (2),
+.BR setuid (2),
+.BR ld.so (8),
+.BR unix (7)

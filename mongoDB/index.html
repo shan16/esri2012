@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="content-type" value="text/html; charset=utf8" />
+  
+  <title>Machine Status</title>
+
+  <style type="text/css">
+
+    body
+    {
+      font-family: "arial", sans-serif;
+      
+    }
+    
+
+    div.machine-box
+    {
+      float: left; 
+      width: 23.5%;
+      height: 160px;
+      border: 5px solid #FF6600;
+      padding-bottom: 10px;
+      margin: 5px;
+    }
+
+    div.machine-header
+    {
+      text-align: center;
+      border-bottom: 5px solid #FF6600;
+      padding-bottom: 10px; 
+    }
+
+    div.machine-data
+    {
+      padding-left: 20px; 
+      margin: 5px;
+    }
+
+    div.log
+    {
+      float: left;
+      width: auto;
+      height: 450px;
+      border: 5px solid #000080;
+      padding: 20px;
+      margin: 5px;
+      overflow: scroll;
+    }
+    
+    div#rate
+    {
+      width: 230px;
+      padding-left: 5px;
+    }
+
+  </style>
+
+
+</head>
+<body>
+
+  <div class = "machine-box", id = "QA9001">
+    <div class = "machine-header">QA 9001</div>
+    <div class = "machine-data", id = "sample-value-QA9001">Sample Value: 10000</div>
+    <div class = "machine-data", id = "last-update-QA9001">Last Update: 1900</div>
+    <div class = "machine-data">OS_name: MacOS </div>
+    <div class = "machine-data">OS_version: 10.5.8</div>
+  </div>
+
+  <div class = "machine-box", id = "QA9002">
+    <div class = "machine-header">QA 9002</div>
+    <div class = "machine-data", id = "sample-value-QA9002">Sample Value: 10000 </div>
+    <div class = "machine-data", id = "last-update-QA9002">Last Update: 1900</div>
+    <div class = "machine-data">OS_name: Windows </div>
+    <div class = "machine-data">OS_version: Win7 SP1</div>
+  </div>
+
+  <div class = "machine-box", id = "QA9003">
+    <div class = "machine-header">QA 9003</div>
+    <div class = "machine-data", id = "sample-value-QA9003">Sample Value: 10000 </div>
+    <div class = "machine-data", id = "last-update-QA9003">Last Update: 1900</div>
+    <div class = "machine-data">OS_name: Windows </div>
+    <div class = "machine-data">OS_version: WinXP SP3</div>
+  </div>
+
+  <div class = "machine-box", id = "QA9004">
+    <div class = "machine-header">QA 9004</div>
+    <div class = "machine-data", id = "sample-value-QA9004">Sample Value: 10000 </div>
+    <div class = "machine-data", id = "last-update-QA9004">Last Update: 1900</div>
+    <div class = "machine-data">OS_name: Linux </div>
+    <div class = "machine-data">OS_version: Ubuntu 11.04</div>
+  </div>
+
+  <div class = "machine-box", id = "QA9005">
+    <div class = "machine-header">QA 9005</div>
+    <div class = "machine-data", id = "sample-value-QA9005">Sample Value: 10000</div>
+    <div class = "machine-data", id = "last-update-QA9005">Last Update: 1900</div>
+    <div class = "machine-data">OS_name: Linux </div>
+    <div class = "machine-data">OS_version: Ubuntu 11.05</div>
+  </div>
+ 
+  <div class = "machine-box", id = "QA9006">
+    <div class = "machine-header">QA 9006</div>
+    <div class = "machine-data", id = "sample-value-QA9006">Sample Value: 10000</div>
+    <div class = "machine-data", id = "last-update-QA9006">Last Update: 1900</div>
+    <div class = "machine-data">OS_name: Linux </div>
+    <div class = "machine-data">OS_version: Ubuntu 11.06</div>
+  </div>
+
+  <div class = "machine-box", id = "QA9007">
+    <div class = "machine-header">QA 9007</div>
+    <div class = "machine-data", id = "sample-value-QA9007">Sample Value: 10000</div>
+    <div class = "machine-data", id = "last-update-QA9007">Last Update: 1900</div>
+    <div class = "machine-data">OS_name: Linux </div>
+    <div class = "machine-data">OS_version: Ubuntu 12.10</div>
+  </div>
+
+  <div class = "machine-box", id = "QA9008">
+    <div class = "machine-header">QA 9008</div>
+    <div class = "machine-data", id = "sample-value-QA9008">Sample Value: 10000</div>
+    <div class = "machine-data", id = "last-update-QA9008">Last Update: 1900</div>
+    <div class = "machine-data">OS_name: Windows</div>
+    <div class = "machine-data">OS_version: Win7 SP1</div>
+  </div>
+
+
+
+
+
+
+ 
+<div class = "log">LOG HISTORY<br/><br/>
+
+  <div id = "rate">Updating Rate: 0 per second</div> 
+
+  <p  id = "log-title">[Latest Messages received]:</p>
+  <ul id="socket-messages">
+  </ul>
+
+</div>
+
+<div id = "scripts">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+  <script src="socket.io/socket.io.js"></script>
+
+  <script>
+    var socket = io.connect('http://enigma/');
+    socket.on('initial_info', function (data) {
+      var randomID = Math.floor(Math.random()*100);
+  
+      $('#socket-messages').prepend('<li id='+randomID+'>'+JSON.stringify(data)+'<br/><br/>'+'</li>');
+
+      $('#'+randomID).effect('highlight',{color: '#00CC33'},3000);
+
+      $('.machine-box#'+data.from+' .machine-data#sample-value-'+data.from).html('Sample Value: &nbsp'+data.sample_value).stop(true,true).effect('highlight',{color: '#00CC33'},3000);
+
+      $('.machine-box#'+data.from+' .machine-data#last-update-'+data.from).html('Last Update: &nbsp &nbsp'+data.last_update).stop(true,true).effect('highlight',{color: '#00CC33'},3000);
+    
+    });
+
+
+    socket.on('update', function (data) {   
+
+      $('#socket-messages').prepend('<li id='+data.logID+'>'+JSON.stringify(data)+'<br/><br/>'+'</li>');
+
+      $('#'+data.logID).effect('highlight',{color: '#FDD017'},2000);
+
+      $('.machine-box#'+data.from+' .machine-data#sample-value-'+data.from).html('Sample Value: &nbsp'+data.sample_value).stop(true,true).effect('highlight',{color: '#FDD017'},2000);
+
+      $('.machine-box#'+data.from+' .machine-data#last-update-'+data.from).html('Last Update: &nbsp &nbsp'+data.last_update).stop(true,true).effect('highlight',{color: '#FDD017'},2000);
+
+    });
+
+   
+    socket.on('updateRate', function (data) {
+        
+        $('#rate').html('Updating Rate: '+data.rate+' per second');
+   
+    });
+ 
+  </script>
+
+</div>
+
+</body>
+</html>
+

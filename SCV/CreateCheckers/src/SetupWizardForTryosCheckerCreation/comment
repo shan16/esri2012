@@ -1,0 +1,53 @@
+// CommentTest.cpp
+
+/*
+COPYRIGHT 1995-2004 ESRI
+
+TRADE SECRETS: ESRI PROPRIETARY AND CONFIDENTIAL
+Unpublished material - all rights reserved under the
+Copyright Laws of the United States.
+
+For additional information, contact:
+Environmental Systems Research Institute, Inc.
+Attn: Contracts Dept
+380 New York Street
+Redlands, California, USA 92373
+
+email: contracts@esri.com
+*/
+// PropApplication.cpp: implementation of the CPropApplication class.
+//
+//////////////////////////////////////////////////////////////////////
+
+int one = 0;
+//* comment
+int two = 0;
+
+// #define FOO()\
+	(1 + 2)
+int three = 0;
+
+/*/* comment
+*/
+int four = 0;
+
+/*
+  commented code
+// comment
+// end comment */
+int five = 0;
+
+//************* some comments ******
+int six = 0;
+/* comment */
+int seven = 0;
+
+/*line by line comment*/int eight = 0; /*another comment*/
+
+/*
+line by line comment
+*/int nine = 0; /*another comment*/
+
+
+
+int ten = 0; // comment
